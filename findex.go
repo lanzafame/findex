@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"compress/zlib"
+	"compress/flate"
 	"flag"
 	"fmt"
 	"os"
@@ -20,7 +21,11 @@ func index(indexfile, root string) {
 	}
 	defer fout.Close()
 
-	writer := zlib.NewWriter(fout)
+	writer, err := zlib.NewWriterLevel(fout, flate.BestSpeed)
+	if err != nil {
+		fmt.Println("error: ", ferr)
+		os.Exit(1)
+	}
 	defer writer.Close()
 
 	filepath.Walk(root,
